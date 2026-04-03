@@ -37,7 +37,7 @@ public class PessoaController {
     @Autowired
     private PessoaService pessoaService;
 
-    @Operation(summary = "Adiciona uma nova pessoa", description = "Adiciona um nova pessoa.")
+    @Operation(summary = "Adiciona uma nova pessoa.", description = "Adiciona um nova pessoa.")
     @ApiResponse(responseCode = "200", description = "Pessoa adicionada com sucesso.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PessoaDTO.class)))
     @PostMapping
     public ResponseEntity<PessoaDTO> incluir(@RequestBody @Valid PessoaDTO dto) {
@@ -45,7 +45,7 @@ public class PessoaController {
     }
 
     @PutMapping("/editar/{id}")
-    @Operation(summary = "Atualiza o cadastro de uma Pessoa.", description = "Atualiza os dados de uma pessoa específico dado um ID.")
+    @Operation(summary = "Atualiza o cadastro de uma Pessoa.", description = "Atualiza os dados de uma pessoa específica dado um ID.")
     @ApiResponse(responseCode = "200", description = "Pessoa atualizado com sucesso.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PessoaDTO.class)))
     @ApiResponse(responseCode = "404", description = "Pessoa não encontrado.")
     public ResponseEntity<PessoaDTO> alterar(
@@ -65,13 +65,32 @@ public class PessoaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PessoaDTO>> pesquisar(@RequestParam String nome) {
+    @Operation(summary = "Pesquisa pessoas pelo nome.", description = "Retorna a lista de pessoas cujo nome corresponde ao parâmetro informado.")
+    @ApiResponse(responseCode = "200", description = "Lista de pessoas encontradas.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PessoaDTO.class)))
+    public ResponseEntity<List<PessoaDTO>> pesquisar(
+            @Parameter(description = "Nome (ou parte do nome) da pessoa a ser pesquisada.", example = "Ana")
+            @RequestParam String nome) {
         return ResponseEntity.ok(pessoaService.pesquisar(nome));
     }
 
     @GetMapping("/{id}/peso-ideal")
-    public ResponseEntity<Double> calcularPesoIdeal(@PathVariable Long id) {
+    @Operation(summary = "Calcula o peso ideal de uma pessoa.", description = "Retorna o peso ideal calculado para a pessoa com o ID informado.")
+    @ApiResponse(responseCode = "200", description = "Peso ideal calculado com sucesso.")
+    @ApiResponse(responseCode = "404", description = "Pessoa não encontrada.")
+    public ResponseEntity<Double> calcularPesoIdeal(
+            @Parameter(description = "ID da pessoa para calcular o peso ideal.", example = "1")
+            @PathVariable Long id) {
         return ResponseEntity.ok(pessoaService.calcularPesoIdeal(id));
+    }
+
+    @GetMapping("/cpf/{cpf}")
+    @Operation(summary = "Busca uma pessoa pelo CPF.", description = "Retorna os dados de uma pessoa específica dado o seu CPF.")
+    @ApiResponse(responseCode = "200", description = "Pessoa encontrada no sistema.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PessoaDTO.class)))
+    @ApiResponse(responseCode = "404", description = "Pessoa não encontrada no sistema.")
+    public ResponseEntity<PessoaDTO> getPessoaByCpf(
+            @Parameter(description = "CPF da pessoa a ser encontrada.", example = "123.456.789-00")
+            @PathVariable String cpf) {
+        return ResponseEntity.ok(pessoaService.findByCpf(cpf));
     }
 
     @GetMapping("/listar")

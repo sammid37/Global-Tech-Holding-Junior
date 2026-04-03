@@ -1,12 +1,13 @@
 package com.sammid37.health_person.service;
 
-import com.sammid37.health_person.dto.PessoaDTO;
-import com.sammid37.health_person.task.PessoaTask;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.sammid37.health_person.dto.PessoaDTO;
+import com.sammid37.health_person.task.PessoaTask;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,10 @@ public class PessoaService {
 
     public PessoaDTO findById(Long id) {
         return pessoaTask.findById(id);
+    }
+
+    public PessoaDTO findByCpf(String cpf) {
+        return pessoaTask.findByCpf(cpf);
     }
 
     public Double calcularPesoIdeal(Long id) {

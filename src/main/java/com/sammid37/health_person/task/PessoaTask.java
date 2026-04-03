@@ -54,6 +54,12 @@ public class PessoaTask {
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada"));
     }
 
+    public PessoaDTO findByCpf(String cpf) {
+        return repository.findByCpf(cpf)
+                .map(mapper::toDTO)
+                .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada"));
+    }
+
     public List<PessoaDTO> pesquisar(String nome) {
         return repository.findAll().stream()
                 .filter(p -> p.getNome().toLowerCase().contains(nome.toLowerCase()))
