@@ -2,13 +2,51 @@
 
 Projeto avaliativo do processo seletivo da Global Tech Holding para a vaga de desenvolvedor Full Stack Júnior. O propósito do projeto é gerenciar o cadastro de pessoas e calcular o seu peso ideal, desenvolvido com Spring Boot, Angular e banco de dados PostgreSQL.
 
+## Estrutura do Projeto
+
+```
+health-person/
+├── public/                         
+├── src/
+│   ├── frontend/                   # Aplicação Angular (frontend)
+│   │   └── src/
+│   │       └── app/
+│   │           ├── core/
+│   │           │   └── services/   # Serviço HTTP para comunicação com a API
+│   │           ├── pages/
+│   │           │   └── pessoas/    # Componentes de listagem, cadastro e edição
+│   │           └── shared/
+│   │               ├── models/     # Interfaces TypeScript da entidade Pessoa
+│   │               └── validators/ # Validadores de CPF e data de nascimento
+│   ├── main/
+│   │   ├── java/com/sammid37/health_person/
+│   │   │   ├── controller/         # Controllers REST da API
+│   │   │   ├── dto/                # Data Transfer Objects (DTOs)
+│   │   │   ├── exception/          # Tratamento global de exceções
+│   │   │   ├── mapper/             # Mapeamento entre entidade e DTO
+│   │   │   ├── model/              # Entidade JPA (Pessoa) e enumerações
+│   │   │   ├── repository/         # Interface de acesso ao banco de dados
+│   │   │   ├── service/            # Lógica de negócio
+│   │   │   ├── task/               # Tarefas agendadas
+│   │   │   └── validation/         # Anotação e validador customizado de CPF
+│   │   └── resources/
+│   │       ├── application.properties 
+│   │       └── database/
+│   │           └── script.sql     # Script de criação do banco de dados
+│   └── test/java/com/sammid37/health_person/
+│       ├── service/               # Testes unitários da camada de serviço
+│       └── validation/            # Testes de validação do DTO
+├── pom.xml                        # Configuração do Maven e dependências do backend
+└── mvnw / mvnw.cmd                
+```
+
 ## Pré-requisitos
 
-- Java 17+
+- Java 21
 - Maven
 - Node.js e npm
 - Angular CLI
-- PostgreSQL
+- PostgreSQL 18
 
 ## Instalação
 
