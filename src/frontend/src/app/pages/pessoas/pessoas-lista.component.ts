@@ -87,13 +87,15 @@ export class PessoasListaComponent implements OnInit {
             });
         } else if (this.filtroCpf.trim()) {
             this.carregando.set(true);
-            this.pessoaService.listar().subscribe({
-                next: (data) => {
-                    const cpfFiltro = this.filtroCpf.trim();
-                    this.pessoas.set(data.filter((p) => p.cpf.includes(cpfFiltro)));
+            this.pessoaService.buscarPorCpf(this.filtroCpf.trim()).subscribe({
+                next: (p) => {
+                    this.pessoas.set([p]);
                     this.carregando.set(false);
                 },
-                error: () => this.carregando.set(false),
+                error: () => {
+                    this.pessoas.set([]);
+                    this.carregando.set(false);
+                },
             });
         } else {
             this.carregarTodos();

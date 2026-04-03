@@ -37,6 +37,10 @@ export class PessoaService {
         return this.http.get<Pessoa>(`${this.apiUrl}/${id}`);
     }
 
+    buscarPorCpf(cpf: string): Observable<Pessoa> {
+        return this.http.get<Pessoa>(`${this.apiUrl}/cpf/${encodeURIComponent(cpf)}`);
+    }
+
     calcularPesoIdeal(id: number): Observable<number> {
         return this.http.get<number>(`${this.apiUrl}/${id}/peso-ideal`);
     }
