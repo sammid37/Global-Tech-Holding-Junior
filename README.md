@@ -51,3 +51,26 @@ ng serve
 ```
 
 3. Acesse a aplicação em `http://localhost:4200/`.
+
+## Testes
+
+### Executar os testes unitários
+
+Na raiz do projeto, execute:
+
+```bash
+./mvnw test
+```
+
+### Relatório de cobertura de código (JaCoCo)
+
+O projeto utiliza o [JaCoCo](https://www.jacoco.org/) para medir a cobertura dos testes. O relatório é gerado automaticamente ao rodar `./mvnw test`.
+
+Após a execução, abra o relatório HTML no navegador:
+
+```plain text
+target/site/jacoco/index.html
+```
+> [**`http://127.0.0.1:5500/target/site/jacoco/index.html`**](http://127.0.0.1:5500/target/site/jacoco/index.html)
+
+> O relatório exibe a cobertura por pacote, classe e método, destacando as linhas cobertas (verde) e não cobertas (vermelho).
