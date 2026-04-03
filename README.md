@@ -2,6 +2,8 @@
 
 Projeto avaliativo do processo seletivo da Global Tech Holding para a vaga de desenvolvedor Full Stack Júnior. O propósito do projeto é gerenciar o cadastro de pessoas e calcular o seu peso ideal, desenvolvido com Spring Boot, Angular e banco de dados PostgreSQL.
 
+![preview image](/public/preview.png)
+
 ## Estrutura do Projeto
 
 ```
