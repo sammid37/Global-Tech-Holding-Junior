@@ -52,17 +52,17 @@ ng serve
 
 3. Acesse a aplicação em `http://localhost:4200/`.
 
-## Testes
+## 🧪 Testes
 
-### Executar os testes unitários
+Sobre os testes implementados neste projeto e cobertura dos testes. 
+
+### Executar os testes unitários do Backend
 
 Na raiz do projeto, execute:
 
 ```bash
 ./mvnw test
 ```
-
-### Relatório de cobertura de código (JaCoCo)
 
 O projeto utiliza o [JaCoCo](https://www.jacoco.org/) para medir a cobertura dos testes. O relatório é gerado automaticamente ao rodar `./mvnw test`.
 
@@ -74,3 +74,28 @@ target/site/jacoco/index.html
 > [**`http://127.0.0.1:5500/target/site/jacoco/index.html`**](http://127.0.0.1:5500/target/site/jacoco/index.html)
 
 > O relatório exibe a cobertura por pacote, classe e método, destacando as linhas cobertas (verde) e não cobertas (vermelho).
+
+### Executar os testes unitários do Frontend
+
+O projeto utiliza o [Vitest](https://vitest.dev/) como framework de testes unitários do frontend, integrado ao Angular CLI via `@angular/build:unit-test`.
+
+Acesse o diretório do frontend e execute:
+
+```bash
+cd src/frontend
+ng test
+```
+
+Para gerar o relatório de cobertura, execute:
+
+```bash
+ng test --coverage
+```
+
+Após a execução, o relatório será gerado na pasta:
+
+```plain text
+src/frontend/coverage/index.html
+```
+
+> O relatório exibe a cobertura por arquivo e função, destacando as linhas cobertas e não cobertas.
