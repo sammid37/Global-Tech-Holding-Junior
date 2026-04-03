@@ -1,0 +1,238 @@
+<div class="min-h-screen bg-base-200">
+    
+    <!-- Header -->
+    <header class="navbar bg-primary text-primary-content shadow-md px-6">
+        <i class="ph-bold ph-heartbeat text-2xl mr-2"></i>
+        <h1 class="text-2xl font-bold tracking-tight">Health Person</h1>
+    </header>
+    
+    <main class="container mx-auto p-6 max-w-2xl">
+        
+        <!-- Breadcrumb -->
+        <div class="text-sm breadcrumbs mb-4">
+            <ul>
+                <li>
+                    <button class="link link-hover" (click)="cancelar()">Pessoas</button>
+                </li>
+                <li>Cadastrar</li>
+            </ul>
+        </div>
+        
+        <div class="bg-base-100 rounded-box shadow p-6 flex flex-col gap-5">
+            
+            <div class="flex items-center gap-3">
+                <i class="ph-bold ph-user-plus text-3xl text-primary"></i>
+                <h2 class="text-xl font-bold">Cadastrar Pessoa</h2>
+            </div>
+            
+            <!-- Alert de erro -->
+            @if (alertErro()) {
+                <div role="alert" class="alert alert-error shadow">
+                    <i class="ph-fill ph-warning-circle text-xl shrink-0"></i>
+                    <span>{{ alertErro() }}</span>
+                    <button class="btn btn-ghost btn-sm btn-square ml-auto" (click)="alertErro.set(null)">
+                        <i class="ph-bold ph-x"></i>
+                    </button>
+                </div>
+            }
+            
+            <!-- Alert de sucesso -->
+            @if (alertSucesso()) {
+                <div role="alert" class="alert alert-success shadow">
+                    <i class="ph-fill ph-check-circle text-xl shrink-0"></i>
+                    <span>Pessoa cadastrada com sucesso!</span>
+                    <button class="btn btn-sm btn-ghost font-semibold" (click)="irParaLista()">
+                        Ver lista
+                        <i class="ph-bold ph-arrow-right"></i>
+                    </button>
+                </div>
+            }
+            
+            <!-- Formulário -->
+            <form [formGroup]="form" (ngSubmit)="cadastrar()" novalidate class="flex flex-col gap-4">
+                
+                <!-- Nome -->
+                <div class="flex flex-col gap-1">
+                    <label class="label font-medium" for="nome">
+                        Nome
+                        <span class="text-error">*</span>
+                    </label>
+                    <input
+                    id="nome"
+                    type="text"
+                    formControlName="nome"
+                    class="input w-full"
+                    [class.input-error]="isInvalid(f.nome)"
+                    placeholder="Nome completo"
+                    />
+                    @if (isInvalid(f.nome)) {
+                        <p class="text-error text-xs mt-1">
+                            <i class="ph-fill ph-warning inline mr-1"></i>
+                            Nome é obrigatório.
+                        </p>
+                    }
+                </div>
+                
+                <!-- CPF -->
+                <div class="flex flex-col gap-1">
+                    <label class="label font-medium" for="cpf">
+                        CPF
+                        <span class="text-error">*</span>
+                    </label>
+                    <input
+                    id="cpf"
+                    type="text"
+                    formControlName="cpf"
+                    class="input w-full font-mono"
+                    [class.input-error]="isInvalid(f.cpf)"
+                    placeholder="000.000.000-00"
+                    maxlength="14"
+                    />
+                    @if (isInvalid(f.cpf)) {
+                        <p class="text-error text-xs mt-1">
+                            <i class="ph-fill ph-warning inline mr-1"></i>
+                            @if (f.cpf.errors?.['required']) {
+                                CPF é obrigatório.
+                            } @else if (f.cpf.errors?.['pattern']) {
+                                CPF inválido. Use o formato 000.000.000-00.
+                            }
+                        </p>
+                    }
+                </div>
+                
+                <!-- Sexo -->
+                <div class="flex flex-col gap-1">
+                    <label class="label font-medium" for="sexo">
+                        Sexo
+                        <span class="text-error">*</span>
+                    </label>
+                    <select
+                    id="sexo"
+                    formControlName="sexo"
+                    class="select w-full"
+                    [class.select-error]="isInvalid(f.sexo)"
+                    >
+                    <option value="" disabled>Selecione...</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Feminino</option>
+                </select>
+                @if (isInvalid(f.sexo)) {
+                    <p class="text-error text-xs mt-1">
+                        <i class="ph-fill ph-warning inline mr-1"></i>
+                        Sexo é obrigatório.
+                    </p>
+                }
+            </div>
+            
+            <!-- Data de Nascimento -->
+            <div class="flex flex-col gap-1">
+                <label class="label font-medium" for="dataNasc">
+                    Data de Nascimento
+                    <span class="text-error">*</span>
+                </label>
+                <input
+                id="dataNasc"
+                type="date"
+                formControlName="dataNasc"
+                class="input w-full"
+                [class.input-error]="isInvalid(f.dataNasc)"
+                [max]="today"
+                />
+                @if (isInvalid(f.dataNasc)) {
+                    <p class="text-error text-xs mt-1">
+                        <i class="ph-fill ph-warning inline mr-1"></i>
+                        Data de nascimento é obrigatória.
+                    </p>
+                }
+            </div>
+            
+            <!-- Peso e Altura (lado a lado) -->
+            <div class="grid grid-cols-2 gap-4">
+                
+                <div class="flex flex-col gap-1">
+                    <label class="label font-medium" for="peso">
+                        Peso (kg)
+                        <span class="text-error">*</span>
+                    </label>
+                    <input
+                    id="peso"
+                    type="number"
+                    formControlName="peso"
+                    class="input w-full"
+                    [class.input-error]="isInvalid(f.peso)"
+                    placeholder="Ex: 70.5"
+                    step="0.01"
+                    min="0.01"
+                    />
+                    @if (isInvalid(f.peso)) {
+                        <p class="text-error text-xs mt-1">
+                            <i class="ph-fill ph-warning inline mr-1"></i>
+                            @if (f.peso.errors?.['required']) {
+                                Peso é obrigatório.
+                            } @else if (f.peso.errors?.['min']) {
+                                Peso deve ser um valor positivo.
+                            }
+                        </p>
+                    }
+                </div>
+                
+                <div class="flex flex-col gap-1">
+                    <label class="label font-medium" for="altura">
+                        Altura (m)
+                        <span class="text-error">*</span>
+                    </label>
+                    <input
+                    id="altura"
+                    type="number"
+                    formControlName="altura"
+                    class="input w-full"
+                    [class.input-error]="isInvalid(f.altura)"
+                    placeholder="Ex: 1.75"
+                    step="0.01"
+                    min="0.01"
+                    />
+                    @if (isInvalid(f.altura)) {
+                        <p class="text-error text-xs mt-1">
+                            <i class="ph-fill ph-warning inline mr-1"></i>
+                            @if (f.altura.errors?.['required']) {
+                                Altura é obrigatória.
+                            } @else if (f.altura.errors?.['min']) {
+                                Altura deve ser um valor positivo.
+                            }
+                        </p>
+                    }
+                </div>
+                
+            </div>
+            
+            <!-- Botões -->
+            <div class="flex justify-end gap-3 pt-2 border-t border-base-200">
+                <button
+                type="button"
+                class="btn btn-ghost"
+                (click)="cancelar()"
+                [disabled]="enviando()"
+                >
+                <i class="ph-bold ph-x"></i>
+                Cancelar
+            </button>
+            <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="enviando()"
+            >
+            @if (enviando()) {
+                <span class="loading loading-spinner loading-sm"></span>
+                Cadastrando...
+            } @else {
+                <i class="ph-bold ph-user-plus"></i>
+                Cadastrar
+            }
+        </button>
+    </div>
+    
+</form>
+</div>
+
+</main>
+</div>

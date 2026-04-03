@@ -1,0 +1,302 @@
+<div class="min-h-screen bg-base-200">
+    
+    <!-- Header -->
+    <header class="navbar bg-primary text-primary-content shadow-md px-6">
+        <i class="ph-bold ph-heartbeat text-2xl mr-2"></i>
+        <h1 class="text-2xl font-bold tracking-tight">Health Person</h1>
+    </header>
+    
+    <main class="container mx-auto p-6 flex flex-col gap-6">
+        
+        <!-- Alert de filtros combinados -->
+        @if (alertMessage()) {
+            <div role="alert" class="alert alert-warning shadow">
+                <i class="ph-fill ph-warning text-xl shrink-0"></i>
+                <span>{{ alertMessage() }}</span>
+                <button class="btn btn-ghost btn-sm btn-square ml-auto" (click)="fecharAlert()">
+                    <i class="ph-bold ph-x"></i>
+                </button>
+            </div>
+        }
+        
+        <!-- Filtros + Botão Cadastrar -->
+        <div class="flex flex-wrap items-end gap-4">
+            
+            <fieldset class="fieldset bg-base-100 border border-base-content/20 rounded-md p-4 flex-1 min-w-0">
+                <legend class="fieldset-legend font-semibold">Filtros</legend>
+                <div class="flex flex-wrap gap-4 items-end">
+                    
+                    <label class="flex flex-col gap-1">
+                        <span class="label-text text-sm font-medium">Nome</span>
+                        <input
+                        type="text"
+                        class="input input-sm w-48"
+                        placeholder="Nome da pessoa..."
+                        [(ngModel)]="filtroNome"
+                        />
+                    </label>
+                    
+                    <label class="flex flex-col gap-1">
+                        <span class="label-text text-sm font-medium">CPF</span>
+                        <input
+                        type="text"
+                        class="input input-sm w-40"
+                        placeholder="000.000.000-00"
+                        [(ngModel)]="filtroCpf"
+                        />
+                    </label>
+                    
+                    <label class="flex flex-col gap-1">
+                        <span class="label-text text-sm font-medium">ID</span>
+                        <input
+                        type="number"
+                        class="input input-sm w-24"
+                        placeholder="ID..."
+                        [(ngModel)]="filtroId"
+                        />
+                    </label>
+                    
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary btn-sm" (click)="filtrar()">
+                            <i class="ph-fill ph-funnel"></i>
+                            Filtrar
+                        </button>
+                        <button class="btn btn-ghost btn-sm" (click)="limparFiltros()">
+                            <i class="ph-bold ph-x"></i>
+                            Limpar filtros
+                        </button>
+                    </div>
+                    
+                </div>
+            </fieldset>
+            
+            <button class="btn btn-success self-end" (click)="irParaCadastro()">
+                <i class="ph-bold ph-user-plus text-lg"></i>
+                Cadastrar
+            </button>
+            
+        </div>
+        
+        <!-- Tabela -->
+        <div class="overflow-x-auto bg-base-100 rounded-md border border-base-content/20">
+            <table class="table">
+                <thead>
+                    <tr class="bg-base-200">
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Sexo</th>
+                        <th>Data de Nasc.</th>
+                        <th>Altura (m)</th>
+                        <th>Peso (kg)</th>
+                        <th class="sticky right-0 bg-base-200 text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    @if (carregando()) {
+                        <tr>
+                            <td colspan="8" class="text-center py-10">
+                                <span class="loading loading-spinner loading-md text-primary"></span>
+                            </td>
+                        </tr>
+                    } @else if (pessoas().length === 0) {
+                        <tr>
+                            <td colspan="8" class="text-center py-10 text-base-content/50">
+                                <div class="flex flex-col items-center gap-2">
+                                    <i class="ph-thin ph-users text-5xl"></i>
+                                    <span>Nenhum registro encontrado.</span>
+                                </div>
+                            </td>
+                        </tr>
+                    } @else {
+                        @for (pessoa of pessoas(); track pessoa.id) {
+                            <tr class="hover">
+                                <td class="font-mono text-sm">{{ pessoa.id }}</td>
+                                <td>{{ pessoa.nome }}</td>
+                                <td class="font-mono text-sm">{{ pessoa.cpf }}</td>
+                                <td>{{ pessoa.sexo === 'M' ? 'Masculino' : 'Feminino' }}</td>
+                                <td>{{ pessoa.dataNasc | date:'dd/MM/yyyy' }}</td>
+                                <td>{{ pessoa.altura }}</td>
+                                <td>{{ pessoa.peso }}</td>
+                                <td class="sticky right-0 bg-base-100">
+                                    <div class="flex justify-center gap-1">
+                                        
+                                        <div class="tooltip tooltip-left" data-tip="Visualizar">
+                                            <button class="btn btn-xs btn-square text-base-content/70" (click)="visualizar(pessoa)">
+                                                <i class="ph-bold ph-eye text-base"></i>
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="tooltip tooltip-left" data-tip="Editar">
+                                            <button class="btn btn-xs btn-square text-base-content/70" (click)="irParaEdicao(pessoa.id!)">
+                                                <i class="ph-bold ph-pencil text-base"></i>
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="tooltip tooltip-left" data-tip="Excluir">
+                                            <button class="btn btn-xs btn-square text-error" (click)="confirmarDeletar(pessoa)">
+                                                <i class="ph-bold ph-trash text-base"></i>
+                                            </button>
+                                        </div>
+                                        
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    
+                </tbody>
+            </table>
+        </div>
+        
+    </main>
+</div>
+
+<!-- Modal: Confirmar Exclusão -->
+<dialog #deletarModal class="modal">
+    <div class="modal-box max-w-sm">
+        
+        @if (pessoaParaDeletar(); as pessoa) {
+            
+            <div class="flex flex-col items-center gap-4 text-center">
+                
+                <div class="bg-error/10 text-error rounded-full p-4">
+                    <i class="ph-bold ph-trash text-4xl"></i>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-lg">Excluir registro</h3>
+                    <p class="text-base-content/70 text-sm mt-1">
+                        Tem certeza que deseja excluir
+                        <strong class="text-base-content">{{ pessoa.nome }}</strong>?
+                        Essa ação não pode ser desfeita.
+                    </p>
+                </div>
+                
+                <div class="flex gap-3 w-full">
+                    <form method="dialog" class="flex-1">
+                        <button class="btn btn-ghost w-full" [disabled]="deletando()">
+                            <i class="ph-bold ph-x"></i>
+                            Cancelar
+                        </button>
+                    </form>
+                    <button
+                    class="btn btn-error flex-1"
+                    (click)="deletar()"
+                    [disabled]="deletando()"
+                    >
+                    @if (deletando()) {
+                        <span class="loading loading-spinner loading-sm"></span>
+                        Excluindo...
+                    } @else {
+                        <i class="ph-bold ph-trash"></i>
+                        Excluir
+                    }
+                </button>
+            </div>
+            
+        </div>
+        
+    }
+    
+</div>
+
+<form method="dialog" class="modal-backdrop">
+    <button>close</button>
+</form>
+</dialog>
+
+<!-- Modal: Visualizar Pessoa -->
+<dialog #visualizarModal class="modal">
+    <div class="modal-box max-w-md">
+        
+        @if (pessoaSelecionada(); as pessoa) {
+            
+            <!-- Cabeçalho do modal -->
+            <div class="flex items-center gap-3 mb-5">
+                <div class="bg-info/10 text-info rounded-full p-2">
+                    <i class="ph-bold ph-user text-2xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg leading-tight">{{ pessoa.nome }}</h3>
+                    <span class="badge badge-ghost font-mono text-xs"># {{ pessoa.id }}</span>
+                </div>
+                <form method="dialog" class="ml-auto">
+                    <button class="btn btn-ghost btn-sm btn-square">
+                        <i class="ph-bold ph-x"></i>
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Dados pessoais -->
+            <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm mb-6">
+                
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-base-content/50 text-xs font-medium uppercase tracking-wide">CPF</span>
+                    <span class="font-mono">{{ pessoa.cpf }}</span>
+                </div>
+                
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-base-content/50 text-xs font-medium uppercase tracking-wide">Sexo</span>
+                    <span>{{ pessoa.sexo === 'M' ? 'Masculino' : 'Feminino' }}</span>
+                </div>
+                
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-base-content/50 text-xs font-medium uppercase tracking-wide">Data de Nascimento</span>
+                    <span>{{ pessoa.dataNasc | date:'dd/MM/yyyy' }}</span>
+                </div>
+                
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-base-content/50 text-xs font-medium uppercase tracking-wide">Altura</span>
+                    <span>{{ pessoa.altura }} m</span>
+                </div>
+                
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-base-content/50 text-xs font-medium uppercase tracking-wide">Peso atual</span>
+                    <span>{{ pessoa.peso }} kg</span>
+                </div>
+                
+            </div>
+            
+            <div class="divider my-0"></div>
+            
+            <!-- Seção peso ideal -->
+            <div class="mt-4 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-semibold">Peso ideal</span>
+                    <button
+                    class="btn btn-info btn-sm"
+                    (click)="calcularPesoIdeal()"
+                    [disabled]="carregandoPesoIdeal()"
+                    >
+                    @if (carregandoPesoIdeal()) {
+                        <span class="loading loading-spinner loading-xs"></span>
+                        Calculando...
+                    } @else {
+                        <i class="ph-bold ph-calculator"></i>
+                        Calcular
+                    }
+                </button>
+            </div>
+            
+            @if (pesoIdeal() !== null) {
+                <div class="alert alert-info">
+                    <i class="ph-fill ph-scales text-xl shrink-0"></i>
+                    <div>
+                        <p class="text-sm">O peso ideal de <strong>{{ pessoa.nome }}</strong> é:</p>
+                        <p class="text-2xl font-bold">{{ pesoIdeal() | number:'1.2-2' }} kg</p>
+                    </div>
+                </div>
+            }
+        </div>
+        
+    }
+    
+</div>
+
+<!-- Fechar ao clicar fora -->
+<form method="dialog" class="modal-backdrop">
+    <button>close</button>
+</form>
+</dialog>
