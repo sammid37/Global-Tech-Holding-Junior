@@ -87,6 +87,7 @@
                     [class.input-error]="isInvalid(f.cpf)"
                     placeholder="000.000.000-00"
                     maxlength="14"
+                    (input)="formatarCPF($event)"
                     />
                     @if (isInvalid(f.cpf)) {
                         <p class="text-error text-xs mt-1">
@@ -95,6 +96,8 @@
                                 CPF é obrigatório.
                             } @else if (f.cpf.errors?.['pattern']) {
                                 CPF inválido. Use o formato 000.000.000-00.
+                            } @else if (f.cpf.errors?.['cpfInvalido']) {
+                                CPF inválido. Verifique os dígitos informados.
                             }
                         </p>
                     }
@@ -141,7 +144,11 @@
                 @if (isInvalid(f.dataNasc)) {
                     <p class="text-error text-xs mt-1">
                         <i class="ph-fill ph-warning inline mr-1"></i>
-                        Data de nascimento é obrigatória.
+                        @if (f.dataNasc.errors?.['required']) {
+                            Data de nascimento é obrigatória.
+                        } @else if (f.dataNasc.errors?.['dataNascFutura']) {
+                            Data de nascimento não pode ser no futuro.
+                        }
                     </p>
                 }
             </div>

@@ -3,6 +3,8 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { PessoaService } from '../../core/services/pessoa.service';
 import { Pessoa } from '../../shared/models/pessoa.model';
+import { cpfValidator } from '../../shared/validators/cpf.validator';
+import { dataNascValidator } from '../../shared/validators/data-nasc.validator';
 
 @Component({
     selector: 'app-pessoas-edicao',
@@ -28,9 +30,10 @@ export class PessoasEdicaoComponent implements OnInit {
         cpf: new FormControl('', [
             Validators.required,
             Validators.pattern(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
+            cpfValidator(),
         ]),
         sexo: new FormControl<'M' | 'F' | ''>('', [Validators.required]),
-        dataNasc: new FormControl('', [Validators.required]),
+        dataNasc: new FormControl('', [Validators.required, dataNascValidator()]),
         peso: new FormControl<number | null>(null, [
             Validators.required,
             Validators.min(0.01),
@@ -47,6 +50,21 @@ export class PessoasEdicaoComponent implements OnInit {
 
     isInvalid(control: FormControl): boolean {
         return control.invalid && control.touched;
+    }
+
+    formatarCPF(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.slice(0, 11);
+        if (value.length > 9) {
+            value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+        } else if (value.length > 6) {
+            value = value.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+        } else if (value.length > 3) {
+            value = value.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+        }
+        input.value = value;
+        this.f.cpf.setValue(value, { emitEvent: false });
     }
 
     ngOnInit(): void {
