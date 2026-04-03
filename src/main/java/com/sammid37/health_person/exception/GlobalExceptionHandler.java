@@ -2,6 +2,7 @@ package com.sammid37.health_person.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,6 +43,25 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErroResposta> tratarViolacaoDeIntegridade(DataIntegrityViolationException ex, HttpServletRequest request) {
+
+        String mensagem = "Dados inválidos: violação de integridade nos dados enviados.";
+
+        String causa = ex.getRootCause() != null ? ex.getRootCause().getMessage() : "";
+        if (causa.contains("cpf")) {
+            mensagem = "O CPF preenchido já foi utilizado em outro cadastro.";
+        }
+
+        ErroResposta resposta = new ErroResposta(
+                HttpStatus.CONFLICT.value(),
+                mensagem,
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(resposta);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
