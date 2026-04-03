@@ -28,6 +28,8 @@ spring.datasource.password=1234
 
 > Altere os valores de `username` e `password` conforme as credenciais do seu ambiente local. Certifique-se de que o banco de dados `health_person_db` foi criado no PostgreSQL antes de executar a aplicação.
 
+> 📖 A documentação da API do backend pode ser vista em [**`http://localhost:8080/swagger-ui/index.html`**](http://localhost:8080/swagger-ui/index.html)
+
 3. Instale as dependências do frontend:
 ```bash
 cd src/frontend
